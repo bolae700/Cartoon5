@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOLA | Geometric Profile</title>
+    <style>
+        :root {
+            --main-blue: #4A90E2;
+            --accent-orange: #FF6F61;
+            --geo-gray: #F5F7FA;
+        }
+
+        body {
+            background: var(--geo-gray);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Comic Neue', cursive;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .geo-divider {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            clip-path: polygon(0 0, 100% 0, 100% 60%, 0 90%);
+            background: var(--main-blue);
+            z-index: 0;
+        }
+
+        .triangle-overlay {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: var(--accent-orange);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            bottom: -200px;
+            right: -200px;
+            opacity: 0.15;
+        }
+
+        .main-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 8px 8px 0 var(--main-blue);
+            position: relative;
+            max-width: 500px;
+            margin: 20px;
+            z-index: 2;
+            transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: rotate(0deg);
+        }
+
+        .main-card:hover {
+            transform: rotate(-2deg) translateY(-8px);
+            box-shadow: 12px 12px 0 var(--main-blue);
+        }
+
+        .avatar-frame {
+            width: 160px; /* زيادة الحجم */
+            height: 160px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            position: relative;
+            padding: 8px; /* زيادة البادينج */
+            overflow: hidden;
+            background: white; /* خلفية بيضاء للإطار */
+        }
+
+        .frame-rotate {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--main-blue),
+                var(--main-blue) 15px, /* زيادة حجم الشرائط */
+                var(--accent-orange) 15px,
+                var(--accent-orange) 30px
+            );
+            animation: frameRotate 8s linear infinite;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); /* إضافة ظل */
+        }
+
+        @keyframes frameRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .avatar-img {
+            width: calc(100% - 16px); /* تعديل الحجم حسب البادينج */
+            height: calc(100% - 16px);
+            border-radius: 50%;
+            background: url('https://i.ibb.co/dPFpGv9/Default-Cute-anime-boy-pray-3d-art-cartoon-blue-1-30826f36-54b1-49e4-b141-5caad93c4a2c-0.jpg') center/cover;
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 2;
+        }
+
+        .geo-title {
+            font-size: 2.5rem;
+            color: var(--main-blue);
+            text-align: center;
+            margin: 0.5rem 0;
+            position: relative;
+        }
+
+        .geo-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--accent-orange);
+            margin: 0.5rem auto;
+        }
+
+        .info-box {
+            background: rgba(74, 144, 226, 0.1);
+            padding: 1.2rem;
+            border-radius: 15px;
+            margin: 1.5rem 0;
+            text-align: center;
+            border: 2px dashed var(--main-blue);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .geo-button {
+            background: var(--main-blue);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+        }
+
+        .geo-button:hover {
+            background: var(--accent-orange);
+            transform: scale(1.05);
+        }
+
+        .geo-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 6px 6px 0 var(--main-blue);
+            z-index: 1000;
+            transition: 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            max-width: 90%;
+        }
+
+        .geo-modal.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: var(--accent-orange);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg) scale(1.2);
+            background: #ff4757;
+        }
+
+        .blur-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 999;
+        }
+
+        .blur-overlay.active {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .main-card {
+                padding: 1.5rem;
+                transform: rotate(0) !important;
+            }
+            
+            .geo-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="geo-divider"></div>
+    <div class="triangle-overlay"></div>
+    <div class="blur-overlay" onclick="closeModal()"></div>
+
+    <div class="main-card">
+        <div class="avatar-frame">
+            <div class="frame-rotate"></div>
+            <div class="avatar-img"></div>
+        </div>
+
+        <h1 class="geo-title">BOLA EMAD</h1>
+        
+        <div class="info-box">
+            <p>🎮 Professional Gamer<br>📍 Texas, USA</p>
+        </div>
+
+        <div class="button-group">
+            <button class="geo-button" onclick="showModal('team')">Dream Team</button>
+            <button class="geo-button" onclick="showModal('music')">8-Bit Music</button>
+        </div>
+    </div>
+
+    <div class="geo-modal" id="teamModal">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <h2 style="color: var(--main-blue);">Dream Team</h2>
+        <ul style="list-style: none; padding: 0;">
+            <li>Mark</li>
+            <li>Dolly</li>
+            <li>Ramiz</li>
+            <li>Leader</li>
+        </ul>
+    </div>
+
+    <div class="geo-modal" id="musicModal">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <h2 style="color: var(--main-blue);">8-Bit Theme</h2>
+        <iframe 
+            width="100%" 
+            height="200" 
+            src="https://www.youtube.com/embed/IYIZczvu1HU" 
+            frameborder="0" 
+            allowfullscreen
+            style="border: 2px solid var(--main-blue); border-radius: 10px;">
+        </iframe>
+    </div>
+
+    <script>
+        function showModal(type) {
+            document.getElementById(`${type}Modal`).classList.add('active');
+            document.querySelector('.blur-overlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.geo-modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+            document.querySelector('.blur-overlay').classList.remove('active');
+        }
+
+        window.addEventListener('click', (e) => {
+            if(e.target.classList.contains('geo-modal') || e.target.classList.contains('blur-overlay')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
